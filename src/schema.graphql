@@ -1,0 +1,94 @@
+type Query {
+  users(query: String): [User!]!
+  posts(query: String): [Post!]!
+  me: User!
+  post: Post!
+  comments: [Comment!]!
+}
+type Mutation {
+  createUser(data: CreateUserInput): User!
+  deleteUser(id: ID!): User!
+  updateUser(id: ID!, data: UpdateUserInput!): User!
+  createPost(data: CreatePostInput): Post!
+  deletePost(id: ID!): Post!
+  updatePost(id: ID!, data: UpdatePostInput!): Post!
+  createComment(data: CreateCommentInput): Comment!
+  deleteComment(id: ID!): Comment!
+  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+}
+
+type Subscription {
+  count: Int!
+  comment(postId: ID!): CommentSubscriptionPayload!
+  post: PostSubscriptionPayload!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  username: String
+}
+input UpdateUserInput {
+  name: String
+  email: String
+  username: String
+}
+input CreatePostInput {
+  author: ID!
+  title: String!
+  body: String!
+  published: Boolean!
+}
+input UpdatePostInput {
+  title: String
+  body: String
+  published: Boolean
+}
+input CreateCommentInput {
+  author: ID!
+  post: ID!
+  text: String!
+}
+input UpdateCommentInput {
+  text: String
+}
+type User {
+  email: String!
+  name: String!
+  id: ID!
+  username: String
+  posts: [Post!]!
+  comments: [Comment!]!
+}
+
+type Post {
+  id: ID!
+  body: String!
+  title: String!
+  published: Boolean!
+  author: User!
+  comments: [Comment!]!
+}
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  post: Post!
+}
+
+# set your constants as an enum (escpecially important when getting input from client)
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  data: Post!
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  data: Comment!
+}
